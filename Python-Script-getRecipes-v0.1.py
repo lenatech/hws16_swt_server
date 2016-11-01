@@ -34,15 +34,21 @@ def findTheCommonRecipes ( recipesArray1 ,  recipesArray2):
 def main():
 	temp = open ("ingredients.txt", "r+")
 	arrayOfIngredients = temp.read().splitlines()
-	allRecipesArray=[]	
+	allRecipesArray=[]
 	aCounter=0
 	while aCounter<len(arrayOfIngredients):
 		allRecipesArray.append(sendQueryToFuseki(arrayOfIngredients[aCounter]))
 		aCounter+=1
 
 	for x in range(len(allRecipesArray)):
-		if (x+1)<len(allRecipesArray):
-			allRecipesArray[0]=findTheCommonRecipes(allRecipesArray[0],allRecipesArray[x+1])
-	print allRecipesArray[0]
+		if len(allRecipesArray)==1:
+			finalId=allRecipesArray[0]
+		else:
+			if (x+1)<len(allRecipesArray):
+				allRecipesArray[0]=findTheCommonRecipes(allRecipesArray[0],allRecipesArray[x+1])
+				finalId=allRecipesArray[0]
+	print finalId
+
 	print len(allRecipesArray[0])
+
 main()
