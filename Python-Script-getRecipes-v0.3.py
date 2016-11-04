@@ -58,8 +58,6 @@ def findingTheIdofTheName(arrayOfIngredients):
 		a=os.popen(queryString)
 		data=a.read()
 		a.close()
-		print 'data >', data
-		print 'here >',gettingTheFromTheLinkStringName(data)
 		newArrayOfIngredients.append(gettingTheFromTheLinkStringName(data))
 	return newArrayOfIngredients
 
