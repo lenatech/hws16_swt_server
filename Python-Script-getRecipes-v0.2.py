@@ -1,4 +1,6 @@
-//changes: returns only ID of the recipes instead of the whole link
+'''
+changes: returns only ID of the recipes instead of the whole link
+'''
 import os
 
 def changeDataToStringLinkArray ( data ):
