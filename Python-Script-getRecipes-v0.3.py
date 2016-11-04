@@ -61,9 +61,6 @@ def findingTheIdofTheName(arrayOfIngredients):
 		print 'data >', data
 		print 'here >',gettingTheFromTheLinkStringName(data)
 		newArrayOfIngredients.append(gettingTheFromTheLinkStringName(data))
-	print 'start'
-	print newArrayOfIngredients
-	print 'bye'
 	return newArrayOfIngredients
 
 def main():
