@@ -1,5 +1,6 @@
 '''
-changes: it's able to read the ingredients based on their names (it can change the ingredient names to IDs)
+changes: 
+the bug "recipe returns none #1" fixed.
 '''
 import os
 
@@ -44,8 +45,8 @@ def sendQueryToFuseki ( oneIngredientName ):
 
 def findTheCommonRecipes ( recipesArray1 ,  recipesArray2):
 	newRecipesArray1=[]
-	for i in range(len(recipesArray1)-1):
-		for j in range(len(recipesArray2)-1):
+	for i in range(len(recipesArray1)):
+		for j in range(len(recipesArray2)):
 			if recipesArray1[i]==recipesArray2[j]:
 				newRecipesArray1.append(recipesArray1[i])
 				break
@@ -65,6 +66,8 @@ def main():
 	temp = open ("ingredients.txt", "r+")
 	arrayOfIngredientsName = temp.read().splitlines()
 	arrayOfIngredientsID = findingTheIdofTheName(arrayOfIngredientsName)
+	print arrayOfIngredientsName
+	print arrayOfIngredientsID
 	allRecipesArray=[]
 	aCounter=0
 	while aCounter<len(arrayOfIngredientsID):
@@ -79,6 +82,8 @@ def main():
 			if (x+1)<len(allRecipesArray):
 				allRecipesArray[0]=findTheCommonRecipes(allRecipesArray[0],allRecipesArray[x+1])
 				finalId=allRecipesArray[0]
+			else:
+				break
 	print finalId
 	print len(finalId)
 
