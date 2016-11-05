@@ -66,8 +66,11 @@ def main():
 	temp = open ("ingredients.txt", "r+")
 	arrayOfIngredientsName = temp.read().splitlines()
 	arrayOfIngredientsID = findingTheIdofTheName(arrayOfIngredientsName)
+	print '**************'
 	print 'Ingredient Names: ',arrayOfIngredientsName
+	print '**************'
 	print 'Ingredient IDs: ',arrayOfIngredientsID
+	print '**************'
 	allRecipesArray=[]
 	aCounter=0
 	while aCounter<len(arrayOfIngredientsID):
@@ -84,7 +87,10 @@ def main():
 				finalId=allRecipesArray[0]
 			else:
 				break
+	print '**************'
 	print 'Recipe ID: ',finalId
+	print '**************'
 	print 'Number of Recipes: ',len(finalId)
+	print '**************'
 
 main()
