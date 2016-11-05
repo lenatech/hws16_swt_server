@@ -54,7 +54,7 @@ def findTheCommonRecipes ( recipesArray1 ,  recipesArray2):
 def findingTheIdofTheName(arrayOfIngredients):
 	newArrayOfIngredients=[]
 	for i in range(len(arrayOfIngredients)):
-		queryString='rsparql --service http://localhost:3030/F1/query \'SELECT ?p WHERE { GRAPH ?g { ?p ?s "'+arrayOfIngredients[i]+'"} }\''
+		queryString='rsparql --service http://localhost:3030/F1/query \'SELECT ?p WHERE { GRAPH ?g { ?p <http://www.w3.org/2000/01/rdf-schema#label> "'+arrayOfIngredients[i]+'"} }\''
 		a=os.popen(queryString)
 		data=a.read()
 		a.close()
