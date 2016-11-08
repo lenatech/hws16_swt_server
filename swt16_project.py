@@ -4,37 +4,65 @@
 import os
 import requests
 from bs4 import BeautifulSoup
+import re
+from SPARQLWrapper import SPARQLWrapper, JSON
+import codecs
 
 class Querier(object):
-    def find_food_id(self, food_name):
-        query='rsparql --service http://localhost:3030/F1/query \'SELECT ?p WHERE { GRAPH ?g { ?p <http://www.w3.org/2000/01/rdf-schema#label>"'+food_name+'"} }\''
-        a=os.popen(query)
-        data=a.read()
-        a.close()
-        #Extract food id
-        return data[228:-64]
+
+    def sendQuery(self,query,dataset):
+        sparql = SPARQLWrapper("http://localhost:3030/"+dataset+"/query")
+        sparql.setQuery(query)
+        sparql.setReturnFormat(JSON)
+        results = sparql.query().convert()
+        return results
+
+    def find_food_id(self,food_name):
+        dataset = "F1"
+        query = """
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                SELECT ?food_id WHERE{
+                    GRAPH ?g { ?food_id rdfs:label \'"""+food_name+"""\' .}
+                }
+                """
+        results = self.sendQuery(query, dataset)
+        result = results["results"]["bindings"][0]
+        food_id = result["food_id"]["value"][-8:]
+        return food_id
 
     def find_recipe_id (self, food_id):
-        query='rsparql --service http://localhost:3030/F2/query "SELECT ?s WHERE { GRAPH ?o { ?s ?p <http://data.kasabi.com/dataset/foodista/food/'+str(food_id)+'>}}"'
-        a=os.popen(query)
-        data=a.read()
-        a.close()
-
-        #Extract recipe id: first id can be found at 236 ~ 236+8 ;last id can be found at len(data)-74 ~ len(data)-74+8; intervals between each id is 62
+        dataset = "F2"
+        query = """
+                PREFIX recipe: <http://linkedrecipes.org/schema/>
+                PREFIX kasabif: <http://data.kasabi.com/dataset/foodista/food/>
+                SELECT ?recipe_id WHERE{
+                    GRAPH ?graph { ?recipe_id recipe:ingredient kasabif:"""+food_id+""" .}
+                }
+                """
+        results = self.sendQuery(query, dataset)
+        
         recipe_of_food = []
-        k = 236
-        interval = 62
-        while k <= len(data) - 74:
-            recipe_of_food.append(data[k:k+8])
-            k = k + interval
+        for result in results["results"]["bindings"]:
+            recipe_of_food.append(result["recipe_id"]["value"][-8:])
         return recipe_of_food
 
-    def find_recipe_link (self, recipe_id):
-        query ='rsparql --service http://localhost:3030/F2/query "SELECT ?o WHERE {GRAPH ?g { <http://data.kasabi.com/dataset/foodista/recipe/'+str(recipe_id)+'> <http://xmlns.com/foaf/0.1/isPrimaryTopicOf> ?o}}"'
-        a=os.popen(query)
-        data=a.read()
-        a.close()
-        return data[204:-71]
+    def find_recipe_info (self, recipe_id):
+        dataset = "F2"
+        query = """
+                PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+                PREFIX kasabir: <http://data.kasabi.com/dataset/foodista/recipe/>
+                SELECT ?recipe_link ?recipe_image{
+                    GRAPH ?graph { kasabir:"""+recipe_id+""" foaf:isPrimaryTopicOf ?recipe_link.
+                    kasabir:"""+recipe_id+""" foaf:depiction ?recipe_image.}
+                }
+                """
+
+        results = self.sendQuery(query, dataset)
+        result = results["results"]["bindings"][0]
+        recipe_link = result["recipe_link"]["value"]
+        recipe_image = result["recipe_image"]["value"]
+        return (recipe_link, recipe_image)
+
 
 class Parser(object):
     def __init__(self):
@@ -96,8 +124,9 @@ if __name__ == '__main__':
     #Get recipe Link for parsing
     recipe_link = []
     for m in recipe_id:
-        link = querier.find_recipe_link(m)
-        recipe_link.append(link)
+        recipe_info = querier.find_recipe_info(m)
+        recipe_link.append(recipe_info[0])
+        print "recipe_img: ", recipe_info[1]
 
     parser = Parser()
     for link in recipe_link:
