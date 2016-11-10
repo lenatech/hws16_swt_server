@@ -1,12 +1,44 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import socket
+import sys
 import os
 import requests
 from bs4 import BeautifulSoup
 import re
 from SPARQLWrapper import SPARQLWrapper, JSON
 import codecs
+import json
+
+class Socket(object):
+    def create_conn(self, HOST, PORT):
+        # Create Socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        #Bind HOST&PORT Socket
+        try:
+            s.bind((HOST, PORT))
+        except socket.error as err:
+            print 'Bind Failed, Error Code: ' + str(err[0]) + ', Message: ' + err[1]
+            sys.exit()
+        # Setup and Start TCP listener
+        # Socket start listening
+        s.listen(10)
+        conn, addr = s.accept()
+        print conn
+        print addr
+        print 'Now Connected with ' + addr[0] + ':' + str(addr[1])
+        return conn
+
+    def receive(self, conn):
+        return conn.recv(1024)
+
+    def send(self, conn, data):
+        conn.sendall(data)
+    def close(self, conn):
+        conn.close()
 
 class Querier(object):
 
@@ -40,7 +72,7 @@ class Querier(object):
                 }
                 """
         results = self.sendQuery(query, dataset)
-        
+
         recipe_of_food = []
         for result in results["results"]["bindings"]:
             recipe_of_food.append(result["recipe_id"]["value"][-8:])
@@ -93,56 +125,73 @@ class Parser(object):
         return self.parse_title
 
 if __name__ == '__main__':
-    print 'Please provide your ingredients in a text file: ingredients_name.txt'
-    file_name = raw_input('> ')
-    print '\n'
+    while True:
+        HOST = '172.20.10.2'
+        PORT = 2222
 
-    food_name_list = open(file_name, "r+").read().splitlines()
-    print "Ingredients_Name: ", food_name_list
+        sk = Socket()
+        conn = sk.create_conn(HOST, PORT)
+        receive_string = sk.receive(conn)
 
-    querier = Querier()
+        food_name_list = []
+        for food in receive_string.split(","):
+            food_name_list.append(food)
 
-    all_recipes = []
-    for food_name in food_name_list:
-        food_id = querier.find_food_id(food_name)
-        all_recipes.append(querier.find_recipe_id(food_id))
+        print "Ingredients_Name: ", food_name_list
 
-    #Need to optimize this part
-    for x in range(len(all_recipes)):
-        if len(all_recipes)==1:
-            recipe_id=all_recipes[0]
-            break
-        else:
-            if (x+1)<len(all_recipes):
-                r1 = all_recipes[0]
-                r2 = all_recipes[x+1]
-                all_recipes[0]= [val for val in r1 if val in r2]
-                recipe_id = all_recipes[0]
-            else:
+        querier = Querier()
+
+        all_recipes = []
+        for food_name in food_name_list:
+            food_id = querier.find_food_id(food_name)
+            all_recipes.append(querier.find_recipe_id(food_id))
+
+        #Need to optimize this part
+        for x in range(len(all_recipes)):
+            if len(all_recipes)==1:
+                recipe_id=all_recipes[0]
                 break
+            else:
+                if (x+1)<len(all_recipes):
+                    r1 = all_recipes[0]
+                    r2 = all_recipes[x+1]
+                    all_recipes[0]= [val for val in r1 if val in r2]
+                    recipe_id = all_recipes[0]
+                else:
+                    break
 
-    #Get recipe Link for parsing
-    recipe_link = []
-    for m in recipe_id:
-        recipe_info = querier.find_recipe_info(m)
-        recipe_link.append(recipe_info[0])
-        print "recipe_img: ", recipe_info[1]
+        parser = Parser()
 
-    parser = Parser()
-    for link in recipe_link:
-        parser.parse(link)
-        title = parser.getTitle()[0]
-        print "Recipe_Name: ", title
-        print '\n'
+        result_dict ={}
+        for m in recipe_id:
+            recipe_link, recipe_img = querier.find_recipe_info(m)
+            print "recipe_img: ", recipe_img
+            print "recipe_link: ", recipe_link
 
-        print 'Brief_Ingredients:'
-        ingredients = parser.getIngredients()
-        for l in ingredients:
-            print l
-        print '\n'
+            parser.parse(recipe_link)
+            title = parser.getTitle()[0]
+            print "Recipe_Name: ", title
+            print '\n'
 
-        print 'Steps_Detatils: '
-        preparation = parser.getPreparation()
-        for m in preparation:
-            print m
-        print '\n'
+            print 'Brief_Ingredients:'
+            ingredients = parser.getIngredients()
+            for l in ingredients:
+                print l
+            print '\n'
+
+            print 'Steps_Detatils: '
+            preparation = parser.getPreparation()
+            for m in preparation:
+                print m
+            print '\n'
+
+            result_dict["Recipe_Name"]= parser.getTitle()
+            result_dict["Recipe_image"] = recipe_img
+            result_dict["Brief_Ingredients"]= parser.getIngredients()
+            result_dict["Steps_Detatils"] = parser.getPreparation()
+
+        serialized_dict = json.dumps(result_dict)
+        #print "serialized_dict", serialized_dict
+
+        sk.send(conn, serialized_dict)
+        sk.close(conn)
