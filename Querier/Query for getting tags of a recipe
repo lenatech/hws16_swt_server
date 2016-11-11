@@ -1,0 +1,5 @@
+PREFIX recipe: <http://linkedrecipes.org/schema/>
+PREFIX recID: <http://data.kasabi.com/dataset/foodista/recipe/>
+SELECT ?recipe_id WHERE{
+  GRAPH ?graph { recID:TY5CMZ7R recipe:category ?recipe_id.}
+}
