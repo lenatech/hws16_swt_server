@@ -91,25 +91,49 @@ class Querier(object):
         query = """
                 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
                 PREFIX kasabir: <http://data.kasabi.com/dataset/foodista/recipe/>
-                SELECT ?recipe_link ?recipe_image{
-                    GRAPH ?graph { kasabir:"""+recipe_id+""" foaf:isPrimaryTopicOf ?recipe_link.
-                    kasabir:"""+recipe_id+""" foaf:depiction ?recipe_image.}
-                }
-                """
+                PREFIX recipe: <http://linkedrecipes.org/schema/>
+                PREFIX kasabit: <http://data.kasabi.com/dataset/foodista/tags/>
+                PREFIX purl: <http://purl.org/dc/terms/>
 
+                SELECT
+                    DISTINCT ?recipe_link
+                    (SAMPLE (?img) as ?recipe_image)
+                    (SAMPLE (?desc) as ?recipe_description)
+                    (group_concat(distinct strafter(str(?recipe_tag), 'http://data.kasabi.com/dataset/foodista/tags/' );separator='|') as ?recipe_tags)
+                    (group_concat(distinct strafter(str(?recipe_related), 'http://data.kasabi.com/dataset/foodista/recipe/' );separator='|') as ?recipe_relateds)
+                    (group_concat(distinct strafter(str(?recipe_technique), 'http://data.kasabi.com/dataset/foodista/technique/' );separator='|') as ?recipe_techniques)
+                WHERE {
+                    GRAPH ?graph{
+                        kasabir:"""+recipe_id+""" foaf:isPrimaryTopicOf ?recipe_link.
+                        kasabir:"""+recipe_id+""" foaf:depiction ?img.
+                        OPTIONAL{kasabir:"""+recipe_id+""" purl:description ?desc}.
+                        OPTIONAL { VALUES ?desc{"none"} }.
+                        OPTIONAL{kasabir:"""+recipe_id+""" recipe:category ?recipe_tag}.
+                        OPTIONAL{VALUES ?recipe_tag{"none"} }.
+                        OPTIONAL{kasabir:"""+recipe_id+""" purl:related ?recipe_related}.
+                        OPTIONAL{VALUES ?recipe_related{"none"} }.
+                        OPTIONAL{kasabir:"""+recipe_id+""" recipe:uses ?recipe_technique}.
+                        OPTIONAL{VALUES ?recipe_technique{"none"} }.
+                    }
+                }GROUP BY ?recipe_link
+                """
         results = self.sendQuery(query, dataset)
         result = results["results"]["bindings"][0]
         recipe_link = result["recipe_link"]["value"]
         recipe_image = result["recipe_image"]["value"]
-        return (recipe_link, recipe_image)
+        recipe_description = result["recipe_description"]["value"]
+        recipe_tags = [str(j) for j in (result["recipe_tags"]["value"]).split('|')]
+        recipe_relateds = [str(j) for j in (result["recipe_relateds"]["value"]).split('|')]
+        recipe_techniques = [str(j) for j in (result["recipe_techniques"]["value"]).split('|')]
+        return (recipe_link, recipe_image, recipe_description, recipe_tags, recipe_relateds, recipe_techniques)
 
 class Parser(object):
     def __init__(self):
-        self.parse_ingredients = []
-        self.parse_preparation = []
         self.parse_title = []
 
     def parse(self, link):
+        self.parse_ingredients = []
+        self.parse_preparation = []
         res = requests.get(link)
         soup = BeautifulSoup(res.text, "lxml")
 
@@ -133,12 +157,13 @@ class Parser(object):
 
 if __name__ == '__main__':
     while True:
-        HOST = '192.168.0.10'
+        HOST = '192.168.178.66'
         PORT = 2222
 
         sk = Socket()
         conn = sk.create_conn(HOST, PORT)
         receive_string = sk.receive(conn)
+
         data_loaded = json.loads(receive_string)
 
         querier = Querier()
@@ -160,18 +185,18 @@ if __name__ == '__main__':
         result_dict = []
         for x in range(len(recipe_id)):
             recipe = {}
-            recipe_link, recipe_img = querier.find_recipe_info(recipe_id[x])
+            recipe_link, recipe_image, recipe_description, recipe_tags, recipe_relateds, recipe_techniques = querier.find_recipe_info(recipe_id[x])
             parser.parse(recipe_link)
 
             recipe["recipeName"] = parser.getTitle()[x]
-            recipe["description"] = " "
-            recipe["imgURL"] = recipe_img
+            recipe["description"] = recipe_description
+            recipe["imgURL"] = recipe_image
             recipe["ingredients"] = parser.getIngredients()
             recipe["preparation"] = parser.getPreparation()
-            recipe["tags"] = " "
-            recipe["techniques"] = " "
-            recipe["tools"] = " "
-            recipe["related"] = " "
+            recipe["tags"] = recipe_tags
+            recipe["techniques"] = recipe_techniques
+            #recipe["tools"] = recipe_tools
+            recipe["related"] = recipe_relateds
 
             result_dict.append(recipe)
 
