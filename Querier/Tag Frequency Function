@@ -8,7 +8,7 @@ def countTags(recId):
 		recString+=" ?other = recID:"+str(recId[i])
 		if i != (len(recId)-1):
 			recString+=" ||"
-	queryString="""PREFIX recipe: <http://linkedrecipes.org/schema/> PREFIX recID: <http://data.kasabi.com/dataset/foodista/recipe/> SELECT ?tag (count(?tag) as ?count) (SAMPLE(?other) as ?myRecID) WHERE{{ GRAPH ?graph { ?other recipe:category ?tag.} FILTER( """+recString+""" )} union {GRAPH ?graph {?other recipe:category ?tag. }FILTER("""+recString+""")}} GROUP BY ?tag ORDER BY DESC(?count) LIMIT 5"""
+	queryString="""PREFIX recipe: <http://linkedrecipes.org/schema/> PREFIX recID: <http://data.kasabi.com/dataset/foodista/recipe/> SELECT ?tag (count(?tag) as ?count) (SAMPLE(?other) as ?myRecID) WHERE{{ GRAPH ?graph { ?other recipe:category ?tag.}FILTER( """+recString+""" )}} GROUP BY ?tag ORDER BY DESC(?count) LIMIT 5"""
         sparql = SPARQLWrapper("http://localhost:3030/F2/query")
         sparql.setQuery(queryString)
         sparql.setReturnFormat(JSON)
@@ -20,3 +20,4 @@ def countTags(recId):
 		tagFrequency[i].append(result["tag"]["value"][45:])
 		tagFrequency[i].append(result["myRecID"]["value"][47:])
 	return  tagFrequency
+
