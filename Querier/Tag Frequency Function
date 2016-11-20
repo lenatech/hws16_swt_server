@@ -6,7 +6,6 @@ def countTags(recId):
 		if i != (len(recId)-1):
 			recString+=" ||"
 	query="""PREFIX recipe: <http://linkedrecipes.org/schema/> PREFIX kasabir: <http://data.kasabi.com/dataset/foodista/recipe/> SELECT ?recipe WHERE{ SELECT (SAMPLE(?recipe_id) as ?recipe) ?tag (count(?tag) as ?count) WHERE{ GRAPH ?graph { ?recipe_id recipe:category ?tag.} FILTER("""+recString+""")}GROUP BY (?tag) ORDER BY DESC(?count)}GROUP BY (?recipe)"""
-        sparql = SPARQLWrapper("http://localhost:3030/F2/query")
 	results = self.sendQuery(query, dataset)
 	relevant_recipe=[]
 	for result in results["results"]["bindings"]:
