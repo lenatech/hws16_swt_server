@@ -63,11 +63,20 @@ class Querier(object):
         return food_id
 
     def find_recipe_ids(self, priority_food_ids, other_food_ids):
-        priorities = ", ".join(str(x) for x in self.combinePrefix("kasabif:", priority_food_ids))
-        others = " || ".join(str(x) for x in self.combinePrefix("?other = kasabif:", other_food_ids))
+        priorities = (self.combinePrefix("kasabif:", priority_food_ids))[0] if len(priority_food_ids) ==1 else ", ".join(str(x) for x in self.combinePrefix("kasabif:", priority_food_ids))
+        others = (self.combinePrefix("?other = kasabif:", other_food_ids))[0] if len(other_food_ids) ==1 else " || ".join(str(x) for x in self.combinePrefix("?other = kasabif:", other_food_ids))
 
         dataset = "F2"
-        query = """
+        if len(other_food_ids) <1:
+            query = """
+                PREFIX recipe: <http://linkedrecipes.org/schema/>
+                PREFIX kasabif: <http://data.kasabi.com/dataset/foodista/food/>
+                SELECT ?recipe_id WHERE{
+                    GRAPH ?graph {?recipe_id recipe:ingredient """+priorities+""".}
+                }
+                """
+        else:
+            query = """
                 PREFIX recipe: <http://linkedrecipes.org/schema/>
                 PREFIX kasabif: <http://data.kasabi.com/dataset/foodista/food/>
                 SELECT ?recipe_id WHERE{
@@ -174,9 +183,11 @@ if __name__ == '__main__':
             if v == 1:
                 food_id = querier.find_food_id(k)
                 priority_food_ids.append(food_id)
-            else:
+            elif v == 0:
                 food_id = querier.find_food_id(k)
                 other_food_ids.append(food_id)
+            else:
+                print "priority missing"
 
         recipe_id = querier.find_recipe_ids(priority_food_ids, other_food_ids)
         #Write file for Evaluation
