@@ -1,92 +1,40 @@
-State Fair Apple
-Acerola Juice
-Ogen Melon
+State Fair Apple,Acerola Juice,Ogen Melon
 End***********End
 Rocky Mountain Oysters
 End***********End
-Glohaven Peach
-Grey Sole
-Prinzenapfel Apple
-Cabernet Sauvignon
+Glohaven Peach,Grey Sole,Prinzenapfel Apple,Cabernet Sauvignon
 End***********End
-Bagalhouce
-Brassica Rapa
-Qing Yuan Kiwi
-Envy Sweet Potato
-Biancone Grapes
-Smoked Herring
+Bagalhouce,Brassica Rapa,Qing Yuan Kiwi,Envy Sweet Potato,Biancone Grapes,Smoked Herring
 End***********End
 Pusa Dwarf Papaya
 End***********End
-Small Beer
-Raki
-Channa dall
-Irish Breakfast Tea
-Kirschwasser
+Small Beer,Raki,Channa dall,Irish Breakfast Tea,Kirschwasser
 End***********End
-Trophy Tomato
-White Grouper
+Trophy Tomato,White Grouper
 End***********End
-Suji
-Mysore Banana
-Za'atar
-Valhrona Cocoa Powder
+Suji,Mysore Banana,Za'atar,Valhrona Cocoa Powder
 End***********End
-Bogdanusa Grapes
-Nile Perch
-Passendale Cheese
-Mascarpone
+Bogdanusa Grapes,Nile Perch,Passendale Cheese,Mascarpone
 End***********End
-Tricolor Garden Sage
-Blenheim Apple
-Black Drum Fish
+Tricolor Garden Sage,Blenheim Apple,Black Drum Fish
 End***********End
-Damiana Leaf
-Arak
-Capunti
-Chrysanthemum Leaves
-Cinsault
+Damiana Leaf,Arak,Capunti,Chrysanthemum Leaves,Cinsault
 End***********End
-Date-Plum
-Charcuterie
+Date-Plum,Charcuterie
 End***********End
-Cortese Grapes
-Bulmer's Norman Apple
-Indonesian Bay Leaf
+Cortese Grapes,Bulmer's Norman Apple,Indonesian Bay Leaf
 End***********End
-Aji Mirasol Pepper
-Baking Powder
+Aji Mirasol Pepper,Baking Powder
 End***********End
-Shui Jin Gui Oolong Tea
-Isoleucine Amino Acid
-Lima Bean
-Desert Fig
+Shui Jin Gui Oolong Tea,Isoleucine Amino Acid,Lima Bean,Desert Fig
 End***********End
-Redland Carrot
-Grated Parmesan Cheese
-Grape Sage
-Bulgar
-Squid Ink
-Large Top Bitter Melon
+Redland Carrot,Grated Parmesan Cheese,Grape Sage,Bulgar,Squid Ink,Large Top Bitter Melon
 End***********End
-Tiger Shrimp
-Early White Fig
+Tiger Shrimp,Early White Fig
 End***********End
-Genmaicha
-Pickling Cucumbers
-pork carnitas
-Anthotyro Cheese
-Dwarf Lingonberries
+Genmaicha,Pickling Cucumbers,pork carnitas,Anthotyro Cheese,Dwarf Lingonberries
 End***********End
-Green Sweet Apple
-Fern Strawberries
-Urad Bean
-Canned Clams
-Top Red Red Delicious Apple
-Veal Rack
+Green Sweet Apple,Fern Strawberries,Urad Bean,Canned Clams,Top Red Red Delicious Apple,Veal Rack
 End***********End
-Mexican Azafran
-Paris White Cos Lettuce
-Louvi
-Vanderpool Red Apple
+Mexican Azafran,Paris White Cos Lettuce,Louvi,Vanderpool Red Apple
 End***********End
