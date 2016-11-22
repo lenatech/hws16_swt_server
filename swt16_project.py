@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+'''
+Created on Nov 22, 2016
+@author: ChiehHan Chen
+'''
 
 import socket
 import sys
@@ -10,7 +14,7 @@ import re
 from SPARQLWrapper import SPARQLWrapper, JSON
 import codecs
 import json
-
+# Socket connection start and end here
 class Socket(object):
     def create_conn(self, HOST, PORT):
         # Create Socket
@@ -39,7 +43,7 @@ class Socket(object):
         conn.sendall(data)
     def close(self, conn):
         conn.close()
-
+# Handle all SparQL query
 class Querier(object):
 
     def sendQuery(self, query, dataset):
@@ -48,7 +52,7 @@ class Querier(object):
         sparql.setReturnFormat(JSON)
         results = sparql.query().convert()
         return results
-
+    #use the name of the ingredient to find the food id
     def find_food_id(self, food_name):
         dataset = "F1"
         query = """
@@ -61,7 +65,7 @@ class Querier(object):
         result = results["results"]["bindings"][0]
         food_id = result["food_id"]["value"][-8:]
         return food_id
-
+    #search for recipe id regarding to the priority ingredient and others
     def find_recipe_ids(self, priority_food_ids, other_food_ids):
         priorities = (self.combinePrefix("kasabif:", priority_food_ids))[0] if len(priority_food_ids) ==1 else ", ".join(str(x) for x in self.combinePrefix("kasabif:", priority_food_ids))
         others = (self.combinePrefix("?other = kasabif:", other_food_ids))[0] if len(other_food_ids) ==1 else " || ".join(str(x) for x in self.combinePrefix("?other = kasabif:", other_food_ids))
@@ -90,11 +94,11 @@ class Querier(object):
         for result in results["results"]["bindings"]:
             recipe_of_food.append(result["recipe_id"]["value"][-8:])
         return recipe_of_food
-
+    #combine the necessary prefix which has to be taken in the sparql query
     def combinePrefix(self, prefix, id_list):
         L = [prefix + food_id for food_id in id_list]
         return L
-
+    #search for recipe link, recipe image, description, tags, techniques, related recipes
     def find_recipe_info(self, recipe_id):
         dataset = "F2"
         query = """
@@ -135,7 +139,7 @@ class Querier(object):
         recipe_relateds = [str(j) for j in (result["recipe_relateds"]["value"]).split('|')]
         recipe_techniques = [str(j) for j in (result["recipe_techniques"]["value"]).split('|')]
         return (recipe_link, recipe_image, recipe_description, recipe_tags, recipe_relateds, recipe_techniques)
-
+# Parse information that couldn't be found in the dataset
 class Parser(object):
     def parse(self, link):
         self.parse_ingredients = []
@@ -166,15 +170,15 @@ if __name__ == '__main__':
     while True:
         HOST = '192.168.0.24'
         PORT = 2222
-
+        # start and receive socket
         sk = Socket()
         conn = sk.create_conn(HOST, PORT)
         receive_string = sk.receive(conn)
-
+        #load the data as json format for further read
         data_loaded = json.loads(receive_string)
 
         querier = Querier()
-
+        #divide priority other foods for further queries
         priority_food_ids = []
         other_food_ids = []
         for k, v in data_loaded.items():
@@ -186,7 +190,7 @@ if __name__ == '__main__':
                 other_food_ids.append(food_id)
             else:
                 print "priority missing"
-
+        #find the recipe id
         recipe_id = querier.find_recipe_ids(priority_food_ids, other_food_ids)
         #Write file for Evaluation
         file = codecs.open("recipe_ids.txt", "w", "utf-8")
@@ -195,7 +199,7 @@ if __name__ == '__main__':
         file.close()
 
         parser = Parser()
-
+        # get data from sparql and parse from the webpage
         result_dict = []
         for x in range(len(recipe_id)):
             recipe = {}
@@ -210,7 +214,7 @@ if __name__ == '__main__':
             recipe["tags"] = recipe_tags
             recipe["techniques"] = recipe_techniques
             #recipe["tools"] = recipe_tools
-
+            # generate related recipe names
             related_list = []
             for m in range(len(recipe_relateds)):
                 related = {}
@@ -222,7 +226,7 @@ if __name__ == '__main__':
             recipe["related"] = related_list
 
             result_dict.append(recipe)
-
+        #serialize the data in json and send back to android via socket
         serialized_dict = json.dumps(result_dict)
         sk.send(conn, serialized_dict)
         sk.close(conn)
