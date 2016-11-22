@@ -5,7 +5,7 @@ def main():
 	arrayOfIngredientsName = temp.read().splitlines()
 	temp=[]
 	for i in range(0,20):
-		for j in range(random.randint(0, 6)):
+		for j in range(random.randint(1, 6)):
 			while (1):
 				randomNom=random.randint(0, len(arrayOfIngredientsName)-1)
 				if randomNom in temp:
