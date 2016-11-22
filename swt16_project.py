@@ -137,12 +137,10 @@ class Querier(object):
         return (recipe_link, recipe_image, recipe_description, recipe_tags, recipe_relateds, recipe_techniques)
 
 class Parser(object):
-    def __init__(self):
-        self.parse_title = []
-
     def parse(self, link):
         self.parse_ingredients = []
         self.parse_preparation = []
+        self.parse_title = []
         res = requests.get(link)
         soup = BeautifulSoup(res.text, "lxml")
 
@@ -204,7 +202,7 @@ if __name__ == '__main__':
             recipe_link, recipe_image, recipe_description, recipe_tags, recipe_relateds, recipe_techniques = querier.find_recipe_info(recipe_id[x])
             parser.parse(recipe_link)
 
-            recipe["recipeName"] = parser.getTitle()[x]
+            recipe["recipeName"] = parser.getTitle()
             recipe["description"] = recipe_description
             recipe["imgURL"] = recipe_image
             recipe["ingredients"] = parser.getIngredients()
@@ -212,7 +210,16 @@ if __name__ == '__main__':
             recipe["tags"] = recipe_tags
             recipe["techniques"] = recipe_techniques
             #recipe["tools"] = recipe_tools
-            recipe["related"] = recipe_relateds
+
+            related_list = []
+            for m in range(len(recipe_relateds)):
+                related = {}
+                parser.parse("http://www.foodista.com/recipe/"+recipe_relateds[m])
+                related[recipe_relateds[m]] = parser.getTitle()
+                print related[recipe_relateds[m]]
+                related_list.append(related)
+
+            recipe["related"] = related_list
 
             result_dict.append(recipe)
 
