@@ -157,7 +157,7 @@ class Parser(object):
 
 if __name__ == '__main__':
     while True:
-        HOST = '192.168.178.66'
+        HOST = '192.168.0.24'
         PORT = 2222
 
         sk = Socket()
@@ -179,6 +179,11 @@ if __name__ == '__main__':
                 other_food_ids.append(food_id)
 
         recipe_id = querier.find_recipe_ids(priority_food_ids, other_food_ids)
+        #Write file for Evaluation
+        file = codecs.open("recipe_ids.txt", "w", "utf-8")
+        for j in recipe_id:
+            file.write(j+" ")
+        file.close()
 
         parser = Parser()
 
@@ -201,6 +206,5 @@ if __name__ == '__main__':
             result_dict.append(recipe)
 
         serialized_dict = json.dumps(result_dict)
-
         sk.send(conn, serialized_dict)
         sk.close(conn)
