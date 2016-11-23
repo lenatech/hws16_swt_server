@@ -1,10 +1,11 @@
 '''
 changes: 
-adding tag frequency function
+the bug "recipe returns none #1" fixed.
 '''
 import os
 from SPARQLWrapper import SPARQLWrapper, JSON
 import json
+import copy
 
 
 def gettingTheIdFromTheLinkStringRecipe ( data ):
@@ -72,6 +73,7 @@ def findTheCommonRecipes ( recipesArray1 ,  recipesArray2):
 			if recipesArray1[i]==recipesArray2[j]:
 				newRecipesArray1.append(recipesArray1[i])
 				break
+	
 	return newRecipesArray1
 
 def findingTheIdofTheName(arrayOfIngredients):
@@ -95,24 +97,27 @@ def gettingTags(recId):
 	a.close()
 	return gettingTheTagNames(data)
 
-def countTags(recId):
-	recString=""
-	for i in range(len(recId)):
-		recString+=" ?other = recID:"+str(recId[i])
-		if i != (len(recId)-1):
-			recString+=" ||"
-	queryString="""PREFIX recipe: <http://linkedrecipes.org/schema/> PREFIX recID: <http://data.kasabi.com/dataset/foodista/recipe/> SELECT ?tag (count(?tag) as ?count) (SAMPLE(?other) as ?myRecID) WHERE{{ GRAPH ?graph { ?other recipe:category ?tag.} FILTER( """+recString+""" )} union {GRAPH ?graph {?other recipe:category ?tag. }FILTER("""+recString+""")}} GROUP BY ?tag ORDER BY DESC(?count) LIMIT 5"""
-        sparql = SPARQLWrapper("http://localhost:3030/F2/query")
-        sparql.setQuery(queryString)
+def sendQuery( query, dataset):
+        sparql = SPARQLWrapper("http://localhost:3030/"+dataset+"/query")
+        sparql.setQuery(query)
         sparql.setReturnFormat(JSON)
         results = sparql.query().convert()
-	tagFrequency=[]
-	for i in range(len(results["results"]["bindings"])):
-		result = results["results"]["bindings"][i]
-		tagFrequency.append([])
-		tagFrequency[i].append(result["tag"]["value"][45:])
-		tagFrequency[i].append(result["myRecID"]["value"][47:])
-	return  tagFrequency
+        return results
+
+def countTags(recId):
+	dataset = "F2"
+	recString=""
+	for i in range(len(recId)):
+		recString+=" ?recipe_id = kasabir:"+str(recId[i])
+		if i != (len(recId)-1):
+			recString+=" ||"
+	query="""PREFIX recipe: <http://linkedrecipes.org/schema/> PREFIX kasabir: <http://data.kasabi.com/dataset/foodista/recipe/> SELECT ?recipe WHERE{ SELECT (SAMPLE(?recipe_id) as ?recipe) ?tag (count(?tag) as ?count) WHERE{ GRAPH ?graph { ?recipe_id recipe:category ?tag.} FILTER("""+recString+""")}GROUP BY (?tag) ORDER BY DESC(?count)}GROUP BY (?recipe) LIMIT 5"""
+        sparql = SPARQLWrapper("http://localhost:3030/F2/query")
+	results = sendQuery(query, dataset)
+	relevant_recipe=[]
+	for result in results["results"]["bindings"]:
+		relevant_recipe.append(result["recipe"]["value"][-8:])
+	return relevant_recipe
 
 def main():
 	temp = open ("ingredients.txt", "r+")
@@ -128,7 +133,9 @@ def main():
 	while aCounter<len(arrayOfIngredientsID):
 		allRecipesArray.append(sendQueryToFuseki(arrayOfIngredientsID[aCounter]))
 		aCounter+=1
+	
 
+	backUpAllRecipesArray= copy.copy(allRecipesArray)
 	for x in range(len(allRecipesArray)):
 		if len(allRecipesArray)==1:
 			finalId=allRecipesArray[0]
@@ -139,7 +146,28 @@ def main():
 				finalId=allRecipesArray[0]
 			else:
 				break
-	
+
+	if len(finalId)<5:
+		for i in range(len(backUpAllRecipesArray)-1):
+			del backUpAllRecipesArray[-1]
+			temp=copy.copy(backUpAllRecipesArray)
+			common=[]
+			for x in range(len(temp)):
+				if len(temp)==1:
+					common=temp[0]
+					break
+				else:
+					if (x+1)<len(temp):
+						temp[0]=findTheCommonRecipes(temp[0],temp[x+1])
+						common=temp[0]
+					else:
+						break
+			if len(common)>0:
+				for x in range(len(common)):
+					if len(finalId)<5:
+						finalId.append(common[x])
+			if len(finalId)==5:
+				break
 	'''
 	tagArray=[]
 	aCounter=0
@@ -155,5 +183,8 @@ def main():
 	print '**************'
 	print 'Number of Recipes: ',len(finalId)
 	print '**************'
-	print countTags(finalId)
+	if len(finalId)==5:
+		print 'Number of Recipes: ',finalId
+	if len(finalId)>5:
+		print 'Number of Recipes: ',countTags(finalId)
 main()
