@@ -2,8 +2,8 @@ Caramel
 Red Chili Pepper,Granulated Sugar,Mushrooms,Egg,White Wine
 Garam Masala,Caramel,Oats,Nutella,Skim Milk,Bananas
 Margarine
-Spring Onion,Whole Chicken,Bananas,Chicken Breast
-Garam Masala,Mushrooms,Caramel,Mushrooms,Spring Onion
+Spring Onion,Whole Chicken,Bananas
+Garam Masala,Caramel,Mushrooms,Spring Onion
 Oregano,Beef Tenderloin,Avocado,Margarine,Tabasco Sauce
 Almonds,Beans,Apples
 Yogurt,Garam Masala,Carrot
