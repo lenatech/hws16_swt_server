@@ -1,20 +1,83 @@
 Caramel
-Red Chili Pepper,Granulated Sugar,Mushrooms,Egg,White Wine
-Garam Masala,Caramel,Oats,Nutella,Skim Milk,Bananas
-Margarine
-Spring Onion,Whole Chicken,Bananas
-Garam Masala,Caramel,Mushrooms,Spring Onion
-Oregano,Beef Tenderloin,Avocado,Margarine,Tabasco Sauce
-Almonds,Beans,Apples
-Yogurt,Garam Masala,Carrot
-Soy Sauce,Mozzarella Cheese,Caramel,Red Chili Pepper,Bananas
-Mint,Spring Onion,Mozzarella Cheese ,Oats,Cherry
-Water,Basil,Tabasco Sauce,Avocado,Mozzarella Cheese
-Cherry,Tomato,Cabbage,Mint
-Cabbage,Oats,Baking Powder,Granulated Sugar,Carrot
-Salt,Red Chili Pepper,Caramel,Granulated Sugar
-Baking Powder,Chicken Breast,Olive Oil,Oats
+END**********
+Oats
+Basmati Rice
+Oregano
+Caramel
+END**********
+Basil
+Oregano
+Oregano
+Lime
+Mint
+END**********
+Mustard Powder
+Beef Tenderloin
+END**********
 Sour Cream
-Nutella,Honey,Mint,Chicken Breast,Mustard Powder,Lime
-Basmati Rice,Salted Butter,Lime,Mint,Apples
-Chicken Breast,Granulated Sugar,Baking Powder,Mozzarella Cheese
+Yogurt
+Beef Tenderloin
+Caramel
+Cherry
+END**********
+Olive Oil
+Cabbage
+Chicken Breast
+Water
+Basil
+END**********
+Oats
+Soy Sauce
+Ginger
+END**********
+Tabasco Sauce
+Basmati Rice
+END**********
+Red Chili Pepper
+Lime
+Avocado
+Skim Milk
+END**********
+Bacon
+Water
+Granulated Sugar
+Whole Chicken
+Avocado
+END**********
+Olive Oil
+Olive Oil
+END**********
+Chicken Breast
+END**********
+Bacon
+Black Pepper
+Cherry
+Apples
+END**********
+Chicken Breast
+Cherry
+END**********
+Bananas
+Onion
+END**********
+Carrot
+Beef
+Soy Sauce
+Nutella
+Basil
+END**********
+Tomato
+Chicken Breast
+END**********
+Basmati Rice
+Chicken Breast
+Mozzarella Cheese
+END**********
+Kosher Salt
+Yogurt
+Red Chili Pepper
+Mint
+Mozzarella Cheese
+END**********
+Garam Masala
+END**********
