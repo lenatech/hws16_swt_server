@@ -144,7 +144,6 @@ class Parser(object):
     def parse(self, link):
         self.parse_ingredients = []
         self.parse_preparation = []
-        self.parse_title = []
         res = requests.get(link)
         soup = BeautifulSoup(res.text, "lxml")
 
@@ -155,7 +154,7 @@ class Parser(object):
             self.parse_preparation.append(post.get_text())
 
         for post in soup.find_all(attrs={"itemprop": "name"}):
-            self.parse_title.append(post.get_text())
+            self.parse_title = post.get_text()
 
     def getIngredients(self):
         return self.parse_ingredients
