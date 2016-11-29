@@ -164,6 +164,31 @@ class Parser(object):
 
     def getTitle(self):
         return self.parse_title
+# Serialize the data into the format which android client needs
+class Serializer(object):
+    # get data from sparql and parse from the webpage
+    def write(self, recipe_id):
+        recipe = {}
+        recipe_link, recipe_image, recipe_description, recipe_tags, recipe_relateds, recipe_techniques = querier.find_recipe_info(recipe_id)
+        parser.parse(recipe_link)
+
+        recipe["recipeName"] = parser.getTitle()
+        recipe["description"] = recipe_description
+        recipe["imgURL"] = recipe_image
+        recipe["ingredients"] = parser.getIngredients()
+        recipe["preparation"] = parser.getPreparation()
+        recipe["tags"] = recipe_tags
+        recipe["techniques"] = recipe_techniques
+
+        if len(recipe_relateds) <= 1:
+            recipe["related"] = ""
+        else:
+            related = {}
+            for m in range(len(recipe_relateds)):
+                parser.parse("http://www.foodista.com/recipe/"+recipe_relateds[m])
+                related[recipe_relateds[m]] = parser.getTitle()
+            recipe["related"] = related
+        return recipe
 
 if __name__ == '__main__':
     while True:
@@ -173,58 +198,47 @@ if __name__ == '__main__':
         sk = Socket()
         conn = sk.create_conn(HOST, PORT)
         receive_string = sk.receive(conn)
-        #load the data as json format for further read
-        data_loaded = json.loads(receive_string)
 
+        #init classes
         querier = Querier()
-        #divide priority other foods for further queries
-        priority_food_ids = []
-        other_food_ids = []
-        for k, v in data_loaded.items():
-            if v == 1:
-                food_id = querier.find_food_id(k)
-                priority_food_ids.append(food_id)
-            elif v == 0:
-                food_id = querier.find_food_id(k)
-                other_food_ids.append(food_id)
-            else:
-                print "priority missing"
-        #find the recipe id
-        recipe_id = querier.find_recipe_ids(priority_food_ids, other_food_ids)
-        #Write file for Evaluation
-        file = codecs.open("recipe_ids.txt", "w", "utf-8")
-        for j in recipe_id:
-            file.write(j+" ")
-        file.close()
-
         parser = Parser()
-        # get data from sparql and parse from the webpage
+        serialize = Serializer()
         result_dict = []
-        for x in range(len(recipe_id)):
-            recipe = {}
-            recipe_link, recipe_image, recipe_description, recipe_tags, recipe_relateds, recipe_techniques = querier.find_recipe_info(recipe_id[x])
-            parser.parse(recipe_link)
 
-            recipe["recipeName"] = parser.getTitle()
-            recipe["description"] = recipe_description
-            recipe["imgURL"] = recipe_image
-            recipe["ingredients"] = parser.getIngredients()
-            recipe["preparation"] = parser.getPreparation()
-            recipe["tags"] = recipe_tags
-            recipe["techniques"] = recipe_techniques
-            #recipe["tools"] = recipe_tools
-            # generate related recipe names
-            related_list = []
-            for m in range(len(recipe_relateds)):
-                related = {}
-                parser.parse("http://www.foodista.com/recipe/"+recipe_relateds[m])
-                related[recipe_relateds[m]] = parser.getTitle()
-                print related[recipe_relateds[m]]
-                related_list.append(related)
+        # deal with different data get from socket
+        # client sents list of ingredient
+        try:
+            #load the data as json format for further read
+            data_loaded = json.loads(receive_string)
+            #divide priority other foods for further queries
+            priority_food_ids = []
+            other_food_ids = []
+            for k, v in data_loaded.items():
+                if v == 1:
+                    food_id = querier.find_food_id(k)
+                    priority_food_ids.append(food_id)
+                elif v == 0:
+                    food_id = querier.find_food_id(k)
+                    other_food_ids.append(food_id)
+                else:
+                    print "priority missing"
+            #find the recipe id
+            recipe_id = querier.find_recipe_ids(priority_food_ids, other_food_ids)
+            #Write file for Evaluation
+            #file = codecs.open("recipe_ids.txt", "w", "utf-8")
+            #for j in recipe_id:
+            #    file.write(j+" ")
+            #    file.close()
 
-            recipe["related"] = related_list
+            # write into the json format
+            # get data from sparql and parse from the webpage
+            for x in range(len(recipe_id)):
+                recipe = serialize.write(recipe_id[x])
+                result_dict.append(recipe)
+        #client sents single recipe id and request for information of this recipe
+        except:
+            result_dict = serialize.write(receive_string)
 
-            result_dict.append(recipe)
         #serialize the data in json and send back to android via socket
         serialized_dict = json.dumps(result_dict)
         sk.send(conn, serialized_dict)
