@@ -1,0 +1,5 @@
+# To install all dependecnies run `pip install -r requirements.txt`
+
+requests
+BeautifulSoup
+SPARQLWrapper

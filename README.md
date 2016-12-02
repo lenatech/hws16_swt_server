@@ -1,17 +1,33 @@
 # hws16_swt_FoodBomb
-SWT Project
+SWT Final Project
+
+## How it works?
+This is just part of the SWT final project.
+This project query on the Foodista dataset with SPARQL query and also parse some important information which wasn't included in the dataset to provide a complete & useful recipe information for the client.
+The client side is programmed in an android app by other teammates. Hence, here you only get the python scripts. If you are interested in the Android client app, please clone the code [here](https://github.com/10bitomaroof/AndroidReceipeApp)
+
 
 ## The Dataset
-
-- [The Recipe Dataset](https://ckannet-storage.commondatastorage.googleapis.com/2015-04-16T11:22:17.374Z/recipe-dataset.ttl)
-- TBD (ex. allergen, Calories)
-	* Nutrient: both are used in RDBMS.
-	* [SR25](https://www.ars.usda.gov/northeast-area/beltsville-md/beltsville-human-nutrition-research-center/nutrient-data-laboratory/docs/sr25-download-files/)
-	* [Canadian Nutrient File](http://www.hc-sc.gc.ca/fn-an/nutrition/fiche-nutri-data/cnf_downloads-telechargement_fcen-eng.php)
-
 - [Foodista](https://datahub.io/dataset/foodista)
 	* because kasabi is shut down, only the last data dump is alive. Here is a [backup](https://archive.org/download/kasabi) from other site, I think we'll only use [food.gz](https://archive.org/download/kasabi/food.gz).
-- Run Server
-`$ ./fuseki-server --update --mem /ds `
 
+## Getting Started
+1. Download the latest [jena-fuseki-*-distribution](https://jena.apache.org/documentation/serving_data/)
+2. Unpack the file
+3. Run the Apache Fuseki server
+`./fuseki-server --update --mem /ds`
+4. Open your Browser with the adress below:
+`localhost:3030`
+5. Load the dataset(F1, F2 is in dataset.zip folder) into your Apache Fuseki server
+![Fuseki-screenshot](https://github.com/lenatech/hws16_swt_FoodBomb/blob/master/assets/Fuseki-screenshot.jpg?raw=true)
+6. Install all the required dependencies
+`pip install -r requirements.txt`
+If you don't have pip in your computer, download the script [here](https://bootstrap.pypa.io/get-pip.py)
+Then, run `python get-pip.py`  
+7. Execute the hws16_swt.py script by running
+Edit your IP in hws_swt.py first
+`python hws_swt.py`
+8. Execute Client side Python script to see result
+Edit your IP in client.py first
+`python client.py`
 
