@@ -6,7 +6,6 @@ This is just part of the SWT final project.
 This project query on the Foodista dataset with SPARQL query and also parse some important information which wasn't included in the dataset to provide a complete & useful recipe information for the client.
 The client side is programmed in an android app by other teammates. Hence, here you only get the python scripts. If you are interested in the Android client app, please clone the code [here](https://github.com/10bitomaroof/AndroidReceipeApp)
 
-
 ## The Dataset
 - [Foodista](https://datahub.io/dataset/foodista)
 	* because kasabi is shut down, only the last data dump is alive. Here is a [backup](https://archive.org/download/kasabi) from other site, I think we'll only use [food.gz](https://archive.org/download/kasabi/food.gz).
@@ -30,4 +29,10 @@ Edit your IP in hws_swt.py first
 8. Execute Client side Python script to see result
 Edit your IP in client.py first
 `python client.py`
+
+## Big thanks to 
+- swt16_project.py @[lenatech](https://github.com/lenatech)
+- Evaluation @[farboda](https://github.com/farboda)
+
+
 
