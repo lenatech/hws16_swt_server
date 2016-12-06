@@ -35,7 +35,3 @@ Edit your IP in client.py first
 @[farboda](https://github.com/farboda)
 @[YiruCheng](https://github.com/YiruCheng)
 @[10bitomaroof](https://github.com/10bitomaroof)
-
-
-
-
