@@ -8,7 +8,7 @@ The client side is programmed in an android app by other teammates. Hence, here 
 
 ## The Dataset
 - [Foodista](https://datahub.io/dataset/foodista)
-	* because kasabi is shut down, only the last data dump is alive. Here is a [backup](https://archive.org/download/kasabi) from other site, I think we'll only use [food.gz](https://archive.org/download/kasabi/food.gz).
+	* because kasabi is shut down, only the last data dump is alive. Here is a [backup](https://archive.org/download/kasabi) from other site, we only used [food.gz](https://archive.org/download/kasabi/food.gz).
 
 ## Getting Started
 1. Download the latest [jena-fuseki-*-distribution](https://jena.apache.org/documentation/serving_data/)
@@ -18,7 +18,7 @@ The client side is programmed in an android app by other teammates. Hence, here 
 4. Open your Browser with the adress below:
 `localhost:3030`
 5. Load the dataset(F1, F2 is in dataset.zip folder) into your Apache Fuseki server
-![Fuseki-screenshot](https://github.com/lenatech/hws16_swt_FoodBomb/blob/master/assets/Fuseki-screenshot.jpg?raw=true)
+![Fuseki-screenshot](https://raw.githubusercontent.com/lenatech/hws16_swt_server/master/assets/Fuseki-screenshot.jpg)
 6. Install all the required dependencies
 `pip install -r requirements.txt`
 If you don't have pip in your computer, download the script [here](https://bootstrap.pypa.io/get-pip.py)
@@ -30,9 +30,12 @@ Edit your IP in hws_swt.py first
 Edit your IP in client.py first
 `python client.py`
 
-## Big thanks to 
-- swt16_project.py @[lenatech](https://github.com/lenatech)
-- Evaluation @[farboda](https://github.com/farboda)
+## Thanks to
+@[lenatech](https://github.com/lenatech)
+@[farboda](https://github.com/farboda)
+@[YiruCheng](https://github.com/YiruCheng)
+@[10bitomaroof](https://github.com/10bitomaroof)
+
 
 
 
