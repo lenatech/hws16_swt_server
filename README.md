@@ -31,7 +31,7 @@ Edit your IP in client.py first
 `python client.py`
 
 ## Thanks to
-@[lenatech](https://github.com/lenatech)
-@[farboda](https://github.com/farboda)
-@[YiruCheng](https://github.com/YiruCheng)
-@[10bitomaroof](https://github.com/10bitomaroof)
+- [@lenatech](https://github.com/lenatech)
+- [@farboda](https://github.com/farboda)
+- [@YiruCheng](https://github.com/YiruCheng)
+- [@10bitomaroof](https://github.com/10bitomaroof)
